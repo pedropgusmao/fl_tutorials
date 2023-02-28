@@ -28,17 +28,20 @@ strategy = flwr.server.strategy.FedAvg(
 def main(args):
     flwr.server.start_server(
         server_address="127.0.0.1:8080",
-        config=flwr.server.ServerConfig(num_rounds=3),
+        config=flwr.server.ServerConfig(num_rounds=args.num_rounds),
         strategy=strategy,
     )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog="Flower Client",
-        description="This client trains a CNN on a partition of CIFAR10",
+        prog="Flower Server",
+        description="This server orchestrates an FL ",
     )
-    parser.add_argument("--num_clients", type=int, help="Total Number of clients.")
+    parser.add_argument("--num_clients", type=int, help="Total number of clients.")
+    parser.add_argument(
+        "--num_rounds", type=int, default=3, help="Total number of rounds."
+    )
     parser.add_argument(
         "--fraction_fit",
         type=float,
