@@ -155,7 +155,7 @@ class CustomTensorDataset(Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        x = self.tensors[0][index]
+        x = self.tensors[0][index] / 255
 
         if self.transform:
             x = self.transform(x)
@@ -177,9 +177,16 @@ def create_lda_cifar10_partitions(num_partitions: int, concentration: float) -> 
         print("Partitions already exist. Delete if necessary.")
         return True
 
-    transform = Compose([ToTensor(), Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    trainset = CIFAR10(DATA_ROOT, train=True, download=True, transform=transform)
-    testset = CIFAR10(DATA_ROOT, train=False, download=True, transform=transform)
+    trainset = CIFAR10(
+        DATA_ROOT,
+        train=True,
+        download=True,
+    )
+    testset = CIFAR10(
+        DATA_ROOT,
+        train=False,
+        download=True,
+    )
 
     x = np.array(trainset.data)
     y = np.array(trainset.targets)
