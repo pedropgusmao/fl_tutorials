@@ -55,9 +55,7 @@ class FedAvgLearningRate(FedAvg):
     def configure_fit(
         self, server_round: int, parameters: Parameters, client_manager: ClientManager
     ) -> List[Tuple[ClientProxy, FitIns]]:
-        """Configure the next round of training."""
-        self.previous_parameters = parameters
-        return super().configure_fit(server_round, parameters, client_manager)
+        pass
 
     def aggregate_fit(
         self,
@@ -77,27 +75,7 @@ class FedAvgLearningRate(FedAvg):
             for _, fit_res in results
         ]
 
-        parameters_round = aggregate(weights_results)
-        parameters_start = parameters_to_ndarrays(self.previous_parameters)
 
-        # remember that updates are the opposite of gradients
-        pseudo_gradient: NDArrays = compute_model_delta(
-            parameters_round, parameters_start
-        )
-
-        pseudo_gradient = [
-            layer * self.server_learning_rate for layer in pseudo_gradient
-        ]
-
-        update_norm = compute_norm(pseudo_gradient)
-
-        parameters_aggregated = [
-            x + y for x, y in zip(parameters_start, pseudo_gradient)
-        ]
-
-        # Update current weights
-        parameters_aggregated = ndarrays_to_parameters(parameters_aggregated)
-        self.previous_parameters = parameters_aggregated
 
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
@@ -105,5 +83,5 @@ class FedAvgLearningRate(FedAvg):
             fit_metrics = [(res.num_examples, res.metrics) for _, res in results]
             metrics_aggregated = self.fit_metrics_aggregation_fn(fit_metrics)
 
-        metrics_aggregated["update_norm"] = update_norm
+        # Add update norm to metrics
         return parameters_aggregated, metrics_aggregated

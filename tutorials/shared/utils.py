@@ -1,6 +1,6 @@
 from pathlib import Path
 import pickle
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Callable
 
 import numpy as np
 import torch
@@ -13,6 +13,8 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 from torchvision.datasets import CIFAR10
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm import tqdm
+from flwr.common import *
+from copy import deepcopy
 
 DATA_ROOT = "./dataset"
 
@@ -39,16 +41,23 @@ class Net(nn.Module):
         return x
 
 
-def train(
+def train_regularised(
     net: Module,
     trainloader: DataLoader,
     optimizer: Optimizer,
     device: torch.device,  # pylint: disable=no-member
     epochs: int,
+    regulariser: Callable[
+        [Module, Module, torch.Tensor, torch.Tensor], torch.Tensor
+    ] = None,
 ) -> Tuple[float, float]:
     """Train the network."""
+    pre_train_network = deepcopy(net)
     net.to(device)
     net.train()
+
+    pre_train_network.to(device)
+    pre_train_network.train()
     running_loss, correct, total = 0.0, 0, 0
     criterion = nn.CrossEntropyLoss()
     for epoch in range(1, epochs + 1):
@@ -64,6 +73,9 @@ def train(
                 # forward + backward + optimize
                 outputs = net(images)
                 loss = criterion(outputs, labels)
+                if regulariser is not None:
+                    loss = loss + regulariser(net, pre_train_network, images, labels)
+
                 _, predicted = torch.max(outputs.data, 1)  # pylint: disable=no-member
                 correct += (predicted == labels).sum().item()
                 loss.backward()
@@ -78,6 +90,64 @@ def train(
                 )
 
     return running_loss / total, correct / total
+
+
+def train(
+    net: Module,
+    trainloader: DataLoader,
+    optimizer: Optimizer,
+    device: torch.device,  # pylint: disable=no-member
+    epochs: int,
+) -> Tuple[float, float]:
+    """Train the network."""
+    net.to(device)
+    net.train()
+
+    running_loss, correct, total = 0.0, 0, 0
+    criterion = nn.CrossEntropyLoss()
+    for epoch in range(1, epochs + 1):
+        with tqdm(trainloader, unit="batch") as tepoch:
+            for data in tepoch:
+                tepoch.set_description(f"Epoch {epoch}")
+
+                images, labels = data[0].to(device), data[1].to(device)
+
+                # zero the parameter gradients
+                optimizer.zero_grad()
+
+                # forward + backward + optimize
+                outputs = net(images)
+                loss = criterion(outputs, labels)
+
+                _, predicted = torch.max(outputs.data, 1)  # pylint: disable=no-member
+                correct += (predicted == labels).sum().item()
+                loss.backward()
+                optimizer.step()
+
+                # Get statistics
+                running_loss += loss.item()
+                total += len(labels)
+
+                tepoch.set_postfix(
+                    loss=running_loss / total, accuracy=100.0 * correct / total
+                )
+
+    return running_loss / total, correct / total
+
+
+def compute_model_delta(trained_parameters: NDArrays, og_parameters: NDArrays):
+    return [np.subtract(x, y) for (x, y) in zip(trained_parameters, og_parameters)]
+
+
+def compute_norm(update: NDArrays) -> float:
+    """Compute the l1 norm of a parameter update with mismatched np array shapes, to be used in clipping"""
+    flat_update = update[0]
+    for i in range(1, len(update)):
+        flat_update = np.append(flat_update, update[i])  # type: ignore
+    summed_update = np.abs(flat_update)
+    norm_sum = np.sum(summed_update)
+    norm = np.sqrt(norm_sum)
+    return norm
 
 
 def test(
@@ -166,6 +236,15 @@ class CustomTensorDataset(Dataset):
 
     def __len__(self):
         return self.tensors[0].size(0)
+
+
+def get_device() -> str:
+    device = "cpu"
+    if torch.cuda.is_available():
+        device = "cuda"
+    elif torch.backends.mps.is_available() and torch.backends.mps.is_built():
+        device = "mps"
+    return device
 
 
 def create_lda_cifar10_partitions(num_partitions: int, concentration: float) -> bool:

@@ -11,12 +11,12 @@ import torch
 
 import torch
 from torch.optim import SGD
-from utils import Net, test, train, load_partitioned_data
+from shared.utils import Net, test, train, load_partitioned_data, get_device
 
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = get_device()
 
 
 # Flower Client
