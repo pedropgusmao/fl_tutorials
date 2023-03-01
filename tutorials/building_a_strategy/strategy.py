@@ -75,8 +75,8 @@ class FedAvgLearningRate(FedAvg):
             for _, fit_res in results
         ]
 
-
-
+        parameters_aggregated = aggregate(weights_results)
+        parameters_aggregated = ndarrays_to_parameters(parameters_aggregated)
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.fit_metrics_aggregation_fn:

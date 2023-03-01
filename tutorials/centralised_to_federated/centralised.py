@@ -1,6 +1,6 @@
 import torch
 from torch.optim import SGD
-from utils import Net, load_data, test, train
+from shared.utils import Net, load_data, test, train
 
 
 def main():
