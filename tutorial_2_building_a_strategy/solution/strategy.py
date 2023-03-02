@@ -1,6 +1,7 @@
 from logging import WARNING
 from typing import *
 
+import flwr
 from flwr.common import *
 from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
