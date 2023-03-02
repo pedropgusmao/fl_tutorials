@@ -34,7 +34,6 @@ class FedAvgLearningRate(FedAvg):
         fit_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
         evaluate_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
         server_learning_rate: float = 1.0,
-        server_momentum: float = 0.0,
     ) -> None:
         super().__init__(
             fraction_fit=fraction_fit,
@@ -106,4 +105,5 @@ class FedAvgLearningRate(FedAvg):
             metrics_aggregated = self.fit_metrics_aggregation_fn(fit_metrics)
 
         metrics_aggregated["update_norm"] = update_norm
+        print("Update norm:", update_norm)
         return parameters_aggregated, metrics_aggregated

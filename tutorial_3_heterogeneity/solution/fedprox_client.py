@@ -1,4 +1,4 @@
-from centralised_to_federated.solution.client import CifarClient
+from tutorial_1_centralised_to_federated.solution import CifarClient
 
 import argparse
 from collections import OrderedDict

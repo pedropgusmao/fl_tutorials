@@ -11,7 +11,13 @@ import torch
 
 import torch
 from torch.optim import SGD
-from shared.utils import Net, test, train, load_partitioned_data, get_device
+from shared.utils import (
+    Net,
+    test,
+    train,
+    load_partitioned_data,
+    get_device,
+)
 
 from torch.nn import Module
 from torch.utils.data import DataLoader
@@ -83,14 +89,20 @@ def main(args) -> None:
     fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="Flower Client",
-        description="This client trains a CNN on a partition of CIFAR10",
-    )
-    parser.add_argument("--cid", type=int, help="Client ID.")
-    parser.add_argument(
-        "--partitions_root", type=str, help="Directory containing client partitions."
-    )
-    args = parser.parse_args()
-    main(args)
+def execute():
+    if __name__ == "__main__":
+        parser = argparse.ArgumentParser(
+            prog="Flower Client",
+            description="This client trains a CNN on a partition of CIFAR10",
+        )
+        parser.add_argument("--cid", type=int, help="Client ID.")
+        parser.add_argument(
+            "--partitions_root",
+            type=str,
+            help="Directory containing client partitions.",
+        )
+        args = parser.parse_args()
+        main(args)
+
+
+execute()

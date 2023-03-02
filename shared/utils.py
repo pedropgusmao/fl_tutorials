@@ -5,7 +5,7 @@ from typing import Dict, Tuple, Callable
 import numpy as np
 import torch
 import torch.nn.functional as F
-from common import create_lda_partitions
+from .common import create_lda_partitions
 from torch import Tensor, nn
 from torch.nn import Module
 from torch.optim import Optimizer

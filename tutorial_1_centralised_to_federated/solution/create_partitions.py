@@ -1,6 +1,6 @@
 import argparse
 from torchvision.datasets import CIFAR10
-from utils import create_lda_cifar10_partitions
+from shared.utils import create_lda_cifar10_partitions
 
 DATA_ROOT = "./dataset"
 

@@ -25,7 +25,7 @@ strategy = flwr.server.strategy.FedAvg(
 )
 
 
-def main(args):
+def main(args, strategy=strategy):
     flwr.server.start_server(
         server_address="127.0.0.1:8080",
         config=flwr.server.ServerConfig(num_rounds=args.num_rounds),
@@ -33,20 +33,25 @@ def main(args):
     )
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="Flower Server",
-        description="This server orchestrates an FL ",
-    )
-    parser.add_argument("--num_clients", type=int, help="Total number of clients.")
-    parser.add_argument(
-        "--num_rounds", type=int, default=3, help="Total number of rounds."
-    )
-    parser.add_argument(
-        "--fraction_fit",
-        type=float,
-        default=1.0,
-        help="Fraction of clients to be sampled for training.",
-    )
-    args = parser.parse_args()
-    main(args)
+def execute(strategy=strategy):
+    if __name__ == "__main__":
+        parser = argparse.ArgumentParser(
+            prog="Flower Server",
+            description="This server orchestrates an FL ",
+        )
+        parser.add_argument("--num_clients", type=int, help="Total number of clients.")
+        parser.add_argument(
+            "--num_rounds", type=int, default=3, help="Total number of rounds."
+        )
+        parser.add_argument(
+            "--fraction_fit",
+            type=float,
+            default=1.0,
+            help="Fraction of clients to be sampled for training.",
+        )
+
+        args = parser.parse_args()
+        main(args, strategy=strategy)
+
+
+execute(strategy)
