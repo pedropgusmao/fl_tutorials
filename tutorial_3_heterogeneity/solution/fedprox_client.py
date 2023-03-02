@@ -1,8 +1,6 @@
-from tutorial_1_centralised_to_federated.solution import CifarClient
+from tutorial_1_centralised_to_federated.solution.client import CifarClient, main
 
 import argparse
-from collections import OrderedDict
-from pathlib import Path
 from typing import Dict, List, Tuple
 
 import flwr as fl
@@ -23,9 +21,6 @@ from shared.utils import (
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
-from torch.nn import Optimizer
-import torch.nn as nn
-import tqdm
 
 DEVICE = get_device()
 
@@ -71,3 +66,22 @@ class FedProxClient(CifarClient):
             regulariser=fedprox_regulariser,
         )
         return self.get_parameters(config={}), self.num_examples["trainset"], {}
+
+
+def execute():
+    if __name__ == "__main__":
+        parser = argparse.ArgumentParser(
+            prog="Flower Client",
+            description="This client trains a CNN on a partition of CIFAR10",
+        )
+        parser.add_argument("--cid", type=int, help="Client ID.")
+        parser.add_argument(
+            "--partitions_root",
+            type=str,
+            help="Directory containing client partitions.",
+        )
+        args = parser.parse_args()
+        main(args, FedProxClient)
+
+
+execute()

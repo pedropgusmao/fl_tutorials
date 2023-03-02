@@ -73,7 +73,7 @@ class CifarClient(fl.client.NumPyClient):
         return float(loss), self.num_examples["testset"], {"accuracy": float(accuracy)}
 
 
-def main(args) -> None:
+def main(args, client_generator) -> None:
     """Load data, start CifarClient."""
 
     # Load
@@ -85,7 +85,7 @@ def main(args) -> None:
     model = Net().to(DEVICE).train()
 
     # Start client
-    client = CifarClient(model, trainloader, testloader, num_examples)
+    client = client_generator(model, trainloader, testloader, num_examples)
     fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
 
 
@@ -102,7 +102,7 @@ def execute():
             help="Directory containing client partitions.",
         )
         args = parser.parse_args()
-        main(args)
+        main(args, CifarClient)
 
 
 execute()

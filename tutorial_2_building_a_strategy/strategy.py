@@ -34,7 +34,6 @@ class FedAvgLearningRate(FedAvg):
         fit_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
         evaluate_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
         server_learning_rate: float = 1.0,
-        server_momentum: float = 0.0,
     ) -> None:
         super().__init__(
             fraction_fit=fraction_fit,
@@ -55,7 +54,11 @@ class FedAvgLearningRate(FedAvg):
     def configure_fit(
         self, server_round: int, parameters: Parameters, client_manager: ClientManager
     ) -> List[Tuple[ClientProxy, FitIns]]:
-        pass
+        """Configure the next round of training."""
+
+        # Save previous parameters
+
+        return super().configure_fit(server_round, parameters, client_manager)
 
     def aggregate_fit(
         self,
@@ -76,12 +79,15 @@ class FedAvgLearningRate(FedAvg):
         ]
 
         parameters_aggregated = aggregate(weights_results)
+
+        # Update current weights
         parameters_aggregated = ndarrays_to_parameters(parameters_aggregated)
+
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.fit_metrics_aggregation_fn:
             fit_metrics = [(res.num_examples, res.metrics) for _, res in results]
             metrics_aggregated = self.fit_metrics_aggregation_fn(fit_metrics)
 
-        # Add update norm to metrics
+        # Print update norm
         return parameters_aggregated, metrics_aggregated

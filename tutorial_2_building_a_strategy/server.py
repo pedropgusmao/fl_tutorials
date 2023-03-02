@@ -1,6 +1,6 @@
 from tutorial_1_centralised_to_federated.solution.server import main, fit_config
 import argparse
-from tutorial_2_building_a_strategy.solution.strategy import FedAvgLearningRate
+from strategy import FedAvgLearningRate
 
 
 def execute():
@@ -20,22 +20,12 @@ def execute():
             help="Fraction of clients to be sampled for training.",
         )
         parser.add_argument(
-            "--proximal_mu",
+            "--server_learning_rate",
             type=float,
-            default=1.0,
-            help="Proximal mu.",
+            default=0.5,
+            help="Server learning rate.",
         )
         args = parser.parse_args()
-
-        def fit_config(server_round: int):
-            config = {
-                "batch_size": 32,
-                "local_epochs": 1,
-                "learning_rate": 0.2,
-                "proximal_mu": args.proximal_mu,
-            }
-            return config
-
 
         strategy = FedAvgLearningRate(
             min_available_clients=2,
@@ -43,11 +33,12 @@ def execute():
             min_fit_clients=2,
             fraction_evaluate=1.0,
             min_evaluate_clients=2,
-            server_learning_rate=1.0,
+            server_learning_rate=args.server_learning_rate,
             # evaluate_fn=get_evaluate_fn(model, args.toy),
             on_fit_config_fn=fit_config,
             # on_evaluate_config_fn=evaluate_config,
         )
+
         main(args, strategy=strategy)
 
 
