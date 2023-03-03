@@ -1,7 +1,13 @@
 #!/bin/bash
+
+# To make sure that relative paths work
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$parent_path"
+
 NUM_CLIENTS=2
-SERVER_LR=1.0
 ALPHA=100000
+
+SERVER_LR=1.0 # <--- NEW
 
 ####
 ALPHA_TEMP=$(printf %.2f $ALPHA)
