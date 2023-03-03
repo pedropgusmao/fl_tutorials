@@ -1,7 +1,7 @@
 import pickle
 from copy import deepcopy
 from pathlib import Path
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple, List
 
 import numpy as np
 import torch
@@ -303,3 +303,32 @@ def create_lda_cifar10_partitions(num_partitions: int, concentration: float) -> 
             pickle.dump(test_partition, f)
 
     return True
+
+
+def aggregate_weighted_average(metrics: List[Tuple[int, dict]]) -> dict:
+    """Generic function to combine results from multiple clients
+    following training or evaluation.
+
+    Args:
+        metrics (List[Tuple[int, dict]]): collected clients metrics
+
+    Returns:
+        dict: result dictionary containing the aggregate of the metrics passed.
+    """
+    average_dict: dict = defaultdict(list)
+    total_examples: int = 0
+    for num_examples, metrics_dict in metrics:
+        for key, val in metrics_dict.items():
+            if isinstance(val, numbers.Number):
+                average_dict[key].append((num_examples, val))  # type:ignore
+        total_examples += num_examples
+    return {
+        key: {
+            "avg": float(
+                sum([num_examples * metr for num_examples, metr in val])
+                / float(total_examples)
+            ),
+            "all": val,
+        }
+        for key, val in average_dict.items()
+    }
