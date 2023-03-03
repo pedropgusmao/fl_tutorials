@@ -1,6 +1,6 @@
 from pathlib import Path
 import pickle
-from typing import Dict, Tuple, Callable
+from typing import Dict, Optional, Tuple, Callable
 
 import numpy as np
 import torch
@@ -47,8 +47,8 @@ def train_regularised(
     optimizer: Optimizer,
     device: torch.device,  # pylint: disable=no-member
     epochs: int,
-    regulariser: Callable[
-        [Module, Module, torch.Tensor, torch.Tensor], torch.Tensor
+    regulariser: Optional[
+        Callable[[Module, Module, torch.Tensor, torch.Tensor], torch.Tensor]
     ] = None,
 ) -> Tuple[float, float]:
     """Train the network."""
@@ -96,7 +96,7 @@ def train(
     net: Module,
     trainloader: DataLoader,
     optimizer: Optimizer,
-    device: torch.device,  # pylint: disable=no-member
+    device: str,  # pylint: disable=no-member
     epochs: int,
 ) -> Tuple[float, float]:
     """Train the network."""
@@ -153,7 +153,7 @@ def compute_norm(update: NDArrays) -> float:
 def test(
     net: Module,
     testloader: DataLoader,
-    device: torch.device,  # pylint: disable=no-member
+    device: str,  # pylint: disable=no-member
 ) -> Tuple[float, float]:
     """Validate the network on the entire test set."""
     # Define loss and metrics
