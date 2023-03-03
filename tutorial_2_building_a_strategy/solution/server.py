@@ -1,6 +1,7 @@
 from tutorial_1_centralised_to_federated.solution.server import main, fit_config
 import argparse
 from strategy import FedAvgLearningRate  # <--- NEW
+from shared.utils import aggregate_weighted_average
 
 
 def execute():
@@ -9,8 +10,7 @@ def execute():
             prog="Flower Server using FedAvgLearningRate",
             description="This server orchestrates an FL ",
         )
-        parser.add_argument("--num_clients", type=int,
-                            help="Total number of clients.")
+        parser.add_argument("--num_clients", type=int, help="Total number of clients.")
         parser.add_argument(
             "--num_rounds", type=int, default=3, help="Total number of rounds."
         )
@@ -40,6 +40,7 @@ def execute():
             # evaluate_fn=get_evaluate_fn(model, args.toy),
             on_fit_config_fn=fit_config,
             # on_evaluate_config_fn=evaluate_config,
+            evaluate_metrics_aggregation_fn=aggregate_weighted_average,
         )
 
         main(args, strategy=strategy)
