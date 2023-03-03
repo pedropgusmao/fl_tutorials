@@ -15,11 +15,11 @@ First, we need to create a `strategy.py` file in the main folder of the tutorial
 We want to import some packages from Flower, so we need to add the following lines to the top of the file:
 
 ```python
-from logging import WARNING
-from typing import *
+from logging import INFO
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-import flwr
-from flwr.common import *
+from flwr.common import NDArrays, MetricsAggregationFn, FitRes, FitIns, Parameters, Scalar, parameters_to_ndarrays, ndarrays_to_parameters
+from flwr.common.logger import log
 from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
 from flwr.server.strategy import FedAvg
@@ -300,4 +300,5 @@ In the end, we can run the experiment.
 
 
 ### Step 9: Conclusions
+
 
