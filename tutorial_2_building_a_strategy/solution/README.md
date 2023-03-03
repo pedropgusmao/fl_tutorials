@@ -9,6 +9,10 @@ We will use the Client and some utilities we have already implemented in Tutoria
 
 In this section, the steps of the tutorial are described.
 
+### Step 0: Slides
+
+Slide of the presentation.
+
 ### Step 1: Create an empty strategy file
 
 First, we need to create a `strategy.py` file in the main folder of the tutorial.
@@ -288,7 +292,7 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM
 wait
 ```
 
-### Step 7: Run the experiment
+### Step 7: Run the experiment with different server learning rates
 
 In the end, we can run the experiment.
 
@@ -296,9 +300,24 @@ In the end, we can run the experiment.
 ./run.sh
 ```
 
+Let's now modify the `run.sh` script to run the experiment with different server learning rates.
+
+Change
+
+```bash
+SERVER_LR=1.0 # <--- NEW
+```
+
+to
+
+```bash
+SERVER_LR=0.5 # <--- NEW
+```
+
 ### Step 8: Analyse the results
 
+Show the of the norm of the updates.
 
 ### Step 9: Conclusions
 
-
+Slide of the presentation.
