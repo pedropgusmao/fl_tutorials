@@ -1,11 +1,12 @@
-from pathlib import Path
 import pickle
-from typing import Dict, Optional, Tuple, Callable
+from copy import deepcopy
+from pathlib import Path
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from .common import create_lda_partitions
+from flwr.common import NDArrays
 from torch import Tensor, nn
 from torch.nn import Module
 from torch.optim import Optimizer
@@ -13,8 +14,8 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset
 from torchvision.datasets import CIFAR10
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm import tqdm
-from flwr.common import *
-from copy import deepcopy
+
+from .common import create_lda_partitions
 
 DATA_ROOT = "./dataset"
 
