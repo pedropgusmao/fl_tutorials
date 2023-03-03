@@ -305,7 +305,7 @@ def create_lda_cifar10_partitions(num_partitions: int, concentration: float) -> 
     return True
 
 
-def aggregate_weighted_average(metrics: List[Tuple[int, dict]]) -> dict:
+def aggregate_weighted_average(metrics: List[Tuple[int, Dict]]) -> Dict:
     """Generic function to combine results from multiple clients
     following training or evaluation.
 
