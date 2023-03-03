@@ -11,12 +11,18 @@ import torch
 
 import torch
 from torch.optim import SGD
-from utils import Net, test, train, load_partitioned_data
+from shared.utils import (
+    Net,
+    test,
+    train,
+    load_partitioned_data,
+    get_device,
+)
 
 from torch.nn import Module
 from torch.utils.data import DataLoader
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = get_device()
 
 
 # Flower Client
@@ -71,7 +77,7 @@ class CifarClient(fl.client.NumPyClient):
         return float(loss), self.num_examples["testset"], {"accuracy": accuracy}
 
 
-def main(args) -> None:
+def main(args, client_generator) -> None:
     """Load data, start CifarClient."""
 
     # Load
@@ -83,18 +89,24 @@ def main(args) -> None:
     model = Net().to(DEVICE).train()
 
     # Start client
-    client = CifarClient(model, trainloader, testloader, num_examples)
+    client = client_generator(model, trainloader, testloader, num_examples)
     fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="Flower Client",
-        description="This client trains a CNN on a partition of CIFAR10",
-    )
-    parser.add_argument("--cid", type=int, help="Client ID.")
-    parser.add_argument(
-        "--partitions_root", type=str, help="Directory containing client partitions."
-    )
-    args = parser.parse_args()
-    main(args)
+def execute():
+    if __name__ == "__main__":
+        parser = argparse.ArgumentParser(
+            prog="Flower Client",
+            description="This client trains a CNN on a partition of CIFAR10",
+        )
+        parser.add_argument("--cid", type=int, help="Client ID.")
+        parser.add_argument(
+            "--partitions_root",
+            type=str,
+            help="Directory containing client partitions.",
+        )
+        args = parser.parse_args()
+        main(args, CifarClient)
+
+
+execute()
