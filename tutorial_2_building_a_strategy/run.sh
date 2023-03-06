@@ -7,14 +7,13 @@ cd "$parent_path"
 NUM_CLIENTS=2
 ALPHA=100000
 
-# TODO: add server learning rate variable
+# NOTE: add new param here
 
 ####
 ALPHA_TEMP=$(printf %.2f $ALPHA)
 PARTITIONS_DIR="dataset/lda/${NUM_CLIENTS}/${ALPHA_TEMP}/"
 echo "Starting server"
-# TODO: add server learning rate argument
-python server.py --num_clients $NUM_CLIENTS &
+python server.py --num_clients $NUM_CLIENTS  & # NOTE: add new param here
 sleep 3  # Sleep for 3s to give the server enough time to start
 
 echo "Create partitions"

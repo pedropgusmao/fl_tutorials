@@ -34,7 +34,7 @@ class FedAvgLearningRate(FedAvg):
         initial_parameters: Optional[Parameters] = None,
         fit_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
         evaluate_metrics_aggregation_fn: Optional[MetricsAggregationFn] = None,
-        server_learning_rate: float = 1.0,  # <--- NEW
+        # NOTE: add parameter here
     ) -> None:
         super().__init__(
             fraction_fit=fraction_fit,
@@ -50,13 +50,13 @@ class FedAvgLearningRate(FedAvg):
             fit_metrics_aggregation_fn=fit_metrics_aggregation_fn,
             evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn,
         )
-        self.server_learning_rate = server_learning_rate  # <--- NEW
+        # NOTE: add parameter here
 
     def configure_fit(
         self, server_round: int, parameters: Parameters, client_manager: ClientManager
     ) -> List[Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
-        # TODO: Save previous parameters
+        # NOTE: Save previous parameters
         
         return super().configure_fit(server_round, parameters, client_manager)
 
@@ -91,16 +91,15 @@ class FedAvgLearningRate(FedAvg):
         
         # ==========================
         
-        # TODO: add the new algorithm here
-        
+        # NOTE: add new algo here
 
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.fit_metrics_aggregation_fn:
             fit_metrics = [(res.num_examples, res.metrics) for _, res in results]
             metrics_aggregated = self.fit_metrics_aggregation_fn(fit_metrics)
-            
-        # TODO: add logging of norm here
+        
+        # NOTE: add logging norm here
 
         # Print update norm
         return parameters_aggregated, metrics_aggregated
