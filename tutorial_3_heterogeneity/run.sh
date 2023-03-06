@@ -1,13 +1,16 @@
 #!/bin/bash
 NUM_CLIENTS=2
-PROXIMAL_MU=1.0
 ALPHA=100000
+
+# Add proximal mu
 
 ####
 ALPHA_TEMP=$(printf %.2f $ALPHA)
 PARTITIONS_DIR="dataset/lda/${NUM_CLIENTS}/${ALPHA_TEMP}/"
 echo "Starting server"
-python server.py --num_clients $NUM_CLIENTS --proximal_mu $PROXIMAL_MU  & 
+
+# Give proximal mu to server
+python server.py --num_clients $NUM_CLIENTS & 
 sleep 3  # Sleep for 3s to give the server enough time to start
 
 echo "Create partitions"

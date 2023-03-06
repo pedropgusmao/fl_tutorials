@@ -1,26 +1,14 @@
-from tutorial_1_centralised_to_federated.solution.client import CifarClient, main
-
 import argparse
 from typing import Dict, List, Tuple
 
 import flwr as fl
 import numpy as np
 import torch
-
-import torch
-from torch.optim import SGD
-from shared.utils import (
-    Net,
-    test,
-    train,
-    load_partitioned_data,
-    get_device,
-    train_regularised,
-)
-
 from torch.nn import Module
-from torch.utils.data import DataLoader
+from torch.optim import SGD
 
+from shared.utils import get_device, train_regularised
+from tutorial_1_centralised_to_federated.solution.client import CifarClient, main
 
 DEVICE = get_device()
 

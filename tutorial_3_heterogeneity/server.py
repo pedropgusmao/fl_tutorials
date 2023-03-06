@@ -1,4 +1,4 @@
-from tutorial_1_centralised_to_federated.solution.server import main, fit_config
+from tutorial_1_centralised_to_federated.solution.server import main
 import argparse
 from tutorial_2_building_a_strategy.solution.strategy import FedAvgLearningRate
 
@@ -19,23 +19,15 @@ def execute():
             default=1.0,
             help="Fraction of clients to be sampled for training.",
         )
-        parser.add_argument(
-            "--proximal_mu",
-            type=float,
-            default=1.0,
-            help="Proximal mu.",
-        )
+        # Add argument for proximal mu
+        parser.add_argument()
+
         args = parser.parse_args()
 
+        # Add new config to use proximal mu
         def fit_config(server_round: int):
-            config = {
-                "batch_size": 32,
-                "local_epochs": 1,
-                "learning_rate": 0.2,
-                "proximal_mu": args.proximal_mu,
-            }
+            config = {}
             return config
-
 
         strategy = FedAvgLearningRate(
             min_available_clients=2,

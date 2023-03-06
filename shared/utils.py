@@ -76,6 +76,7 @@ def train_regularised(
                 # forward + backward + optimize
                 outputs = net(images)
                 loss = criterion(outputs, labels)
+                
                 if regulariser is not None:
                     loss = loss + regulariser(net, pre_train_network, images, labels)
 
