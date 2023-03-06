@@ -27,25 +27,15 @@ def save_history(hist: History, name: str, save_dir: Path):
         json.dump(hist.__dict__, f, ensure_ascii=False, indent=4)
 
 
-strategy = flwr.server.strategy.FedAvg(
-    min_available_clients=2,
-    fraction_fit=1.0,
-    min_fit_clients=2,
-    fraction_evaluate=1.0,
-    min_evaluate_clients=2,
-    # evaluate_fn=get_evaluate_fn(model, args.toy),
-    on_fit_config_fn=fit_config,
-    # on_evaluate_config_fn=evaluate_config,
-    evaluate_metrics_aggregation_fn=aggregate_weighted_average,
-)
+strategy = ...
 
 
 def main(args, strategy=strategy):
     save_dir = Path("./")
     hist = flwr.server.start_server(
-        server_address="127.0.0.1:8080",
+        server_address=...
         config=flwr.server.ServerConfig(num_rounds=args.num_rounds),
-        strategy=strategy,
+        strategy=...,
     )
     save_history(hist=hist, name="fl_tutorial", save_dir=save_dir)
 
