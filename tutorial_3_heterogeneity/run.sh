@@ -11,7 +11,7 @@ python server.py --num_clients $NUM_CLIENTS --proximal_mu $PROXIMAL_MU  &
 sleep 3  # Sleep for 3s to give the server enough time to start
 
 echo "Create partitions"
-python ../../tutorial_1_centralised_to_federated/solution/create_partitions.py
+python ../tutorial_1_centralised_to_federated/solution/create_partitions.py
 
 for (( i=0; i<$NUM_CLIENTS; i++ ))
 do

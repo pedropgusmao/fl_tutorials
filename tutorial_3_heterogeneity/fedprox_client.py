@@ -25,7 +25,7 @@ from torch.utils.data import DataLoader
 DEVICE = get_device()
 
 
-def get_fedprox_regulariser():
+def get_fedprox_regulariser(*args, **kwargs):
     # Add global params
 
     def add_fedprox_to_loss(
@@ -46,6 +46,7 @@ class FedProxClient(CifarClient):
         # Set model parameters, train model, return updated model parameters
         self.set_parameters(parameters)
         optimizer = SGD(self.model.parameters(), lr=float(config["learning_rate"]))
+
         fedprox_regulariser = get_fedprox_regulariser(config["proximal_mu"])
         train_regularised(
             self.model,
