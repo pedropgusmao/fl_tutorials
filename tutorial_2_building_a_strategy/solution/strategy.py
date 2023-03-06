@@ -67,8 +67,8 @@ class FedAvgLearningRate(FedAvg):
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
     ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
         """Aggregate fit results using weighted average with learning rate."""
-
         # ==== NO  CHANGES HERE ====
+        
         if not results:
             return None, {}
 
@@ -81,12 +81,15 @@ class FedAvgLearningRate(FedAvg):
             (parameters_to_ndarrays(fit_res.parameters), fit_res.num_examples)
             for _, fit_res in results
         ]
-        # ==========================
 
         # Aggregate the results
         parameters_round = aggregate(weights_results)
+        
+    
         # Convert previous global model parameters to NDArrays
         parameters_start = parameters_to_ndarrays(self.previous_parameters)
+        
+        # ==========================
 
         # Compute the pseudo gradients between the previous global model and the aggregated model
         # NOTE: remember that updates are the opposite of gradients
@@ -109,15 +112,18 @@ class FedAvgLearningRate(FedAvg):
 
         # Update current weights
         parameters_aggregated = ndarrays_to_parameters(parameters_aggregated)
-        self.previous_parameters = parameters_aggregated
 
+        # ==== NO  CHANGES HERE ====
+        
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.fit_metrics_aggregation_fn:
             fit_metrics = [(res.num_examples, res.metrics)
                            for _, res in results]
             metrics_aggregated = self.fit_metrics_aggregation_fn(fit_metrics)
-
+            
+        # ==========================
+        
         # Add the norm of the pseudo gradients to the metrics and print it
         metrics_aggregated["update_norm"] = update_norm
         log(INFO,
