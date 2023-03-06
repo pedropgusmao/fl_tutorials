@@ -37,9 +37,7 @@ def execute():
             fraction_evaluate=1.0,
             min_evaluate_clients=2,
             server_learning_rate=args.server_learning_rate,  # <--- NEW
-            # evaluate_fn=get_evaluate_fn(model, args.toy),
             on_fit_config_fn=fit_config,
-            # on_evaluate_config_fn=evaluate_config,
             evaluate_metrics_aggregation_fn=aggregate_weighted_average,
         )
 
