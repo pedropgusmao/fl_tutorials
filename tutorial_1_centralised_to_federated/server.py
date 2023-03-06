@@ -21,6 +21,8 @@ def fit_config(server_round: int):
 # Helper function to save metrics
 def save_history(hist: History, name: str, save_dir: Path):
     timestamp = datetime.now(timezone.utc).timestamp()
+    path = save_dir / "histories"
+    path.mkdir(exist_ok=True, parents=True)
     with open(
         save_dir / "histories" / f"hist_{timestamp}_{name}.json", "w", encoding="utf-8"
     ) as f:
