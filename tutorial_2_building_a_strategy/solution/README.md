@@ -11,7 +11,7 @@ In this section, the steps of the tutorial are described.
 
 ### Step 0: Slides
 
-Slide of the presentation.
+First slide of the presentation.
 
 ### Step 1: Create an empty strategy file
 
@@ -316,8 +316,8 @@ SERVER_LR=0.5 # <--- NEW
 
 ### Step 8: Analyse the results
 
-Show the of the norm of the updates.
+Show the server's outputs regarding the norm of the updates.
 
 ### Step 9: Conclusions
 
-Slide of the presentation.
+Second slide of the presentation.
