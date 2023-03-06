@@ -44,29 +44,41 @@ class CifarClient(fl.client.NumPyClient):
 
     def get_parameters(self, config: Dict[str, str]) -> List[np.ndarray]:
         # Return model parameters as a list of NumPy ndarrays
-        ...
+        self.model.eval()
+        # Return model parameters as a list of NumPy ndarrays
+        return [val.cpu().numpy() for _, val in self.model.state_dict().items()]
 
     def set_parameters(self, parameters: List[np.ndarray]) -> None:
         # Set model parameters from a list of NumPy ndarrays
-        ...
+        params_dict = zip(self.model.state_dict().keys(), parameters)
+        state_dict = OrderedDict({k: torch.tensor(v) for k, v in params_dict})
+        self.model.load_state_dict(state_dict, strict=True)
 
     def fit(
         self, parameters: List[np.ndarray], config: Dict[str, str]
     ) -> Tuple[List[np.ndarray], int, Dict]:
         # Set model parameters, train model, return updated model parameters
-        ...
+        self.set_parameters(parameters)
         # Select an optimizer
-        ...
+        optimizer = SGD(self.model.parameters(),
+                        lr=float(config["learning_rate"]))
         # Train the model
-        ...
+        loss, accuracy = train(self.model, self.trainloader,
+                               optimizer=optimizer, epochs=1, device=DEVICE)
         # return loss, number of examples, metric
-        ...
+        return (
+            self.get_parameters(config={}),
+            self.num_examples["trainset"],
+            {"accuracy": accuracy},
+        )
 
     def evaluate(
         self, parameters: List[np.ndarray], config: Dict[str, str]
     ) -> Tuple[float, int, Dict]:
         # Set model parameters, evaluate model on local test dataset, return result
-        ...
+        self.set_parameters(parameters)
+        loss, accuracy = test(self.model, self.testloader, device=DEVICE)
+        return float(loss), self.num_examples["testset"], {"accuracy": accuracy}
 
 
 def main(args) -> None:
@@ -82,7 +94,8 @@ def main(args) -> None:
 
     # Start client
     client = CifarClient(model, trainloader, testloader, num_examples)
-    fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
+    fl.client.start_numpy_client(
+        server_address="127.0.0.1:8080", client=client)
 
 
 def execute():
