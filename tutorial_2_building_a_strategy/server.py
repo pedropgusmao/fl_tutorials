@@ -1,6 +1,9 @@
-from tutorial_1_centralised_to_federated.solution.server import main, fit_config
+"""Flower server example."""
 import argparse
-from strategy import FedAvgLearningRate
+import flwr
+from shared.utils import aggregate_weighted_average
+from tutorial_1_centralised_to_federated.solution.server import main, fit_config
+# TODO: import the strategy
 
 
 def execute():
@@ -9,7 +12,8 @@ def execute():
             prog="Flower Server",
             description="This server orchestrates an FL ",
         )
-        parser.add_argument("--num_clients", type=int, help="Total number of clients.")
+        parser.add_argument("--num_clients", type=int,
+                            help="Total number of clients.")
         parser.add_argument(
             "--num_rounds", type=int, default=3, help="Total number of rounds."
         )
@@ -19,24 +23,24 @@ def execute():
             default=1.0,
             help="Fraction of clients to be sampled for training.",
         )
-        parser.add_argument(
-            "--server_learning_rate",
-            type=float,
-            default=0.5,
-            help="Server learning rate.",
-        )
-        args = parser.parse_args()
+        
+        # TODO: add server learning rate argument
 
-        strategy = FedAvgLearningRate(
+        args = parser.parse_args()
+        
+        # TODO: change the strategy
+
+        strategy = flwr.server.strategy.FedAvg(
             min_available_clients=2,
             fraction_fit=1.0,
             min_fit_clients=2,
             fraction_evaluate=1.0,
             min_evaluate_clients=2,
-            server_learning_rate=args.server_learning_rate,
             # evaluate_fn=get_evaluate_fn(model, args.toy),
             on_fit_config_fn=fit_config,
             # on_evaluate_config_fn=evaluate_config,
+            evaluate_metrics_aggregation_fn=aggregate_weighted_average,
+            # TODO: add server learning rate argument
         )
 
         main(args, strategy=strategy)
