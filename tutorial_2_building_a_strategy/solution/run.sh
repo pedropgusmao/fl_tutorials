@@ -13,7 +13,7 @@ SERVER_LR=1.0 # <--- NEW
 ALPHA_TEMP=$(printf %.2f $ALPHA)
 PARTITIONS_DIR="dataset/lda/${NUM_CLIENTS}/${ALPHA_TEMP}/"
 echo "Starting server"
-python server.py --num_clients $NUM_CLIENTS --server_learning_rate $SERVER_LR  & 
+python server.py --num_clients $NUM_CLIENTS --server_learning_rate $SERVER_LR & # <--- NEW
 sleep 3  # Sleep for 3s to give the server enough time to start
 
 echo "Create partitions"
